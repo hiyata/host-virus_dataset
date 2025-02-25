@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A comprehensive virus genome dataset for sequence-based human host prediction.">
+  <title>A Virus Genome Dataset for Sequence-Based Human Host Prediction</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <!-- Google Fonts: Merriweather for body (serif) and Lato for headings (sans-serif) -->
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+  <!-- MathJax for LaTeX-style equations -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: 'Merriweather', serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1, h2, h3 {
+      font-family: 'Lato', sans-serif;
+      margin-top: 0;
+      color: #222;
+    }
+    p, li {
+      font-size: 1rem;
+      margin: 1em 0;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Header */
+    header {
+      border-bottom: 2px solid #ddd;
+      padding: 20px 0;
+      margin-bottom: 30px;
+    }
+    .header-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .project-title {
+      flex: 1 1 60%;
+    }
+    .project-title h1 {
+      font-size: 2.8em;
+      margin-bottom: 5px;
+    }
+    .project-meta {
+      flex: 1 1 35%;
+      text-align: right;
+      font-size: 0.95em;
+      color: #555;
+    }
+    .project-meta .authors a {
+      color: #0066cc;
+    }
+    .links {
+      text-align: right;
+      margin-top: 10px;
+      font-size: 0.95em;
+    }
+    .links a {
+      margin-left: 15px;
+    }
+    
+    /* Sections */
+    section {
+      margin-bottom: 50px;
+    }
+    .section-title {
+      font-size: 1.8em;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+    }
+    .abstract, .bibtex {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-left: 4px solid #ddd;
+      border-radius: 3px;
+      text-align: justify;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    
+    /* Teaser Image */
+    .teaser {
+      text-align: center;
+      margin: 40px 0;
+    }
+    .teaser img {
+      max-width: 100%;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 5px;
+    }
+    .teaser-caption {
+      margin-top: 10px;
+      font-style: italic;
+      color: #555;
+    }
+    
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+    }
+    
+    /* Metadata Table Specific */
+    #metadataTable {
+      width: 100% !important;
+      max-width: 100%;
+    }
+    
+    #metadata-table-container {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f1f1;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+    /* MCC Tables Styles */
+    .mcc-table {
+      margin: 30px auto;
+      max-width: 800px;
+    }
+    .mcc-table caption {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      caption-side: top;
+    }
+    .mcc-table th {
+      background-color: rgb(240, 240, 240);
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+    .mcc-table td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .mcc-table td.left-align {
+      text-align: left;
+    }
+    .mcc-table .row-highlight {
+      background-color: rgb(250, 250, 250);
+    }
+    .mcc-table .totals-row {
+      background-color: rgb(230, 230, 230);
+    }
+    .mcc-table .bold-value {
+      font-weight: 800;
+      background-color: rgba(65, 105, 225, 0.15);
+      color: #0066cc;
+      position: relative;
+    }
+    .mcc-table .bold-value::after {
+      content: "★";
+      font-size: 0.7em;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      color: #0066cc;
+    }
+    
+    /* Interactive Visualizations */
+    .interactive-viz {
+      margin: 40px 0;
+      padding: 20px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      background-color: #fafafa;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .interactive-viz h3 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+      color: #555;
+    }
+    .iframe-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      border-radius: 4px;
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    iframe {
+      border: none;
+      width: 100%;
+      height: 600px;
+      display: block;
+    }
+    .viz-caption {
+      margin-top: 10px;
+      font-style: italic;
+      text-align: center;
+      color: #555;
+    }
+    
+    /* Formula */
+    .formula-container {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 1.1em;
+    }
+    
+    /* Metadata Explorer */
+    #metadata-explorer {
+      margin-top: 40px;
+    }
+    
+    /* Citation Box */
+    .citation-box {
+      background-color: #f9f9f9;
+      border-left: 4px solid #ddd;
+      padding: 15px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      font-size: 0.9em;
+      overflow-x: auto;
+    }
+    
+    /* Footer */
+    footer {
+      border-top: 1px solid #ddd;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .header-top {
+        flex-direction: column;
+        text-align: center;
+      }
+      .project-meta, .links {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-top">
+        <div class="project-title">
+          <h1>A Virus Genome Dataset for Sequence-Based Human Host Prediction</h1>
+        </div>
+        <div class="project-meta">
+          <div class="authors">
+            <span class="author"><a href="https://github.com/hiyata">Alan L. Carbajo Jr.*</a></span> &middot;
+            <span class="author"><a href="https://clasprofiles.wayne.edu/profile/gq1369">Taylor A. Vensko</a></span> &middot;
+            <span class="author"><a href="https://biochemmicroimmuno.med.wayne.edu/profile/dx0934">Philip E. Pellett</a></span>
+          </div>
+          <div class="affiliation">
+            Department of Biochemistry, Microbiology, and Immunology, Wayne State University School of Medicine, Detroit, Michigan, USA
+          </div>
+          <div class="conference">
+            Preprint - February 24, 2025
+          </div>
+        </div>
+      </div>
+      <div class="links">
+        <a href="https://huggingface.co/datasets/hiyata/Virus-Host-Genomes" target="_blank" rel="noopener noreferrer">Dataset</a> |
+        <a href="#" target="_blank" rel="noopener noreferrer">Paper</a> |
+        <a href="https://huggingface.co/hiyata" target="_blank" rel="noopener noreferrer">Models</a> |
+        <a href="https://huggingface.co/spaces/hiyata/HostClassifier" target="_blank" rel="noopener noreferrer">Demo</a>
+      </div>
+    </header>
+    
+    <main>
+      <!-- Teaser Visualization -->
+      <section class="teaser">
+        <img src="images/tsne_raw_vs_embedding_train_v4.pdf" alt="t-SNE visualization of virus sequence embeddings">
+        <div class="teaser-caption">
+          Figure 1: t-SNE visualization comparing raw sequence features versus learned embeddings, showing clear clustering patterns that discriminate sequences of human and non-human virus genomes.
+        </div>
+      </section>
+      
+      <!-- Abstract -->
+      <section class="abstract">
+        <strong>Abstract:</strong> Understanding how viruses evolve to infect specific hosts is crucial for reliably predicting and preventing emerging virus diseases. While current approaches rely heavily on observed phenotypic traits, the virus genome itself contains evolutionary signatures shaped by host adaptation. To enable systematic investigation of these genomic patterns, we present a comprehensive dataset of 58,046 virus genomes spanning 15 families that represent diverse genome architectures and host ranges. Each sequence was systematically classified for human host compatibility based on isolation source, creating a foundation for studying sequence-level determinants of host specificity.
+        <br><br>
+        Through analysis of k-mer frequency patterns across viral taxa, we demonstrate that sequence-based features can be used to accurately predict human host compatibility and even generalize to members of virus families not included in the training set. This performance variation suggests different levels of host-specific signal in virus genomes, potentially reflecting distinct evolutionary constraints across virus groups. Neural network analysis revealed underlying structure in sequence feature space that enables the identification of human-compatible viruses, indicating shared sequence patterns despite diverse genome architectures. This resource and associated analyses provide new opportunities for identifying the genomic basis of virus host range evolution.
+      </section>
+      
+      <!-- Key Findings -->
+      <section>
+        <h2 class="section-title">Key Findings</h2>
+        <ul>
+          <li>Created a comprehensive dataset of <strong>58,046 virus genomes</strong> across <strong>15 families</strong>.</li>
+          <li>Neural network model accurately predicts human host compatibility based solely on sequence features.</li>
+          <li>K-mer frequency patterns (5-mers) provided the strongest predictive signals.</li>
+          <li>Evolutionary analysis revealed a gradient of human adaptation from highly-adapted viruses to those with minimal compatibility.</li>
+          <li>Cross-family validation demonstrated model generalization to unseen virus families.</li>
+          <li>Viruses with low adaptation signals often correlate with higher virulence in humans.</li>
+        </ul>
+      </section>
+      
+      <!-- Dataset Composition -->
+      <section>
+        <h2 class="section-title">Dataset Composition</h2>
+        <p>
+          Our dataset comprises 58,046 complete virus genomes representing 15 distinct virus families, with an approximately equal distribution between human-associated (52.0%) and non-human-associated (48.0%) viruses.
+        </p>
+        <div class="table-container">
+          <table>
+            <caption style="text-align: left; font-weight: bold; margin-bottom: 10px;">Virus Genome Distribution</caption>
+            <thead>
+              <tr>
+                <th>Virus Family</th>
+                <th>Total</th>
+                <th>Human</th>
+                <th>Non-Human</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Flaviviridae</td>
+                <td>9,665</td>
+                <td>2,655</td>
+                <td>7,010</td>
+              </tr>
+              <tr>
+                <td>Picornaviridae</td>
+                <td>9,256</td>
+                <td>7,253</td>
+                <td>2,003</td>
+              </tr>
+              <tr>
+                <td>Sedoreoviridae</td>
+                <td>8,775</td>
+                <td>3,151</td>
+                <td>5,624</td>
+              </tr>
+              <tr>
+                <td>Hepadnaviridae</td>
+                <td>8,281</td>
+                <td>7,780</td>
+                <td>501</td>
+              </tr>
+              <tr>
+                <td>Papillomaviridae</td>
+                <td>3,814</td>
+                <td>3,073</td>
+                <td>741</td>
+              </tr>
+              <tr>
+                <td>Rhabdoviridae</td>
+                <td>3,029</td>
+                <td>39</td>
+                <td>2,990</td>
+              </tr>
+              <tr>
+                <td>Spinareoviridae</td>
+                <td>2,582</td>
+                <td>73</td>
+                <td>2,509</td>
+              </tr>
+              <tr>
+                <td>Adenoviridae</td>
+                <td>2,305</td>
+                <td>1,747</td>
+                <td>558</td>
+              </tr>
+              <tr>
+                <td>Parvoviridae</td>
+                <td>2,045</td>
+                <td>479</td>
+                <td>1,566</td>
+              </tr>
+              <tr>
+                <td>Polyomaviridae</td>
+                <td>2,012</td>
+                <td>1,447</td>
+                <td>565</td>
+              </tr>
+              <tr>
+                <td>Togaviridae</td>
+                <td>1,971</td>
+                <td>811</td>
+                <td>1,160</td>
+              </tr>
+              <tr>
+                <td>Poxviridae</td>
+                <td>1,445</td>
+                <td>835</td>
+                <td>610</td>
+              </tr>
+              <tr>
+                <td>Orthoherpesviridae</td>
+                <td>1,192</td>
+                <td>629</td>
+                <td>563</td>
+              </tr>
+              <tr>
+                <td>Orthomyxoviridae</td>
+                <td>929</td>
+                <td>77</td>
+                <td>852</td>
+              </tr>
+              <tr>
+                <td>Astroviridae</td>
+                <td>745</td>
+                <td>132</td>
+                <td>613</td>
+              </tr>
+              <tr>
+                <td><strong>Total</strong></td>
+                <td><strong>58,046</strong></td>
+                <td><strong>30,181</strong></td>
+                <td><strong>27,865</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+      <!-- Methods -->
+      <section>
+        <h2 class="section-title">Methods</h2>
+        <article>
+          <h3>1. Data Collection and Preparation</h3>
+          <ul>
+            <li>Retrieved 82,513 complete virus genomes from the NCBI Virus database.</li>
+            <li>Filtered for quality and completeness to yield 58,046 high-quality genomes.</li>
+            <li>Implemented a three-tier classification system for host labeling using direct string matching, pattern recognition, and AI-driven analysis.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>2. Feature Extraction</h3>
+          <ul>
+            <li>Generated k-mer frequency vectors for each sequence (k=3 to k=8).</li>
+            <li>Utilized UMAP for dimensionality reduction and visualization.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>3. Neural Network Architecture</h3>
+          <ul>
+            <li>Developed a shallow feed-forward architecture with two hidden layers.</li>
+            <li>Employed GELU activation functions, L2 regularization, and dropout.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>4. Model Evaluation</h3>
+          <ul>
+            <li>Used Matthews Correlation Coefficient (MCC) as the primary evaluation metric.</li>
+            <li>Performed cross-family validation to assess generalization capabilities.</li>
+          </ul>
+        </article>
+      </section>
+      
+      <!-- Key Results & Visualizations -->
+      <section>
+        <h2 class="section-title">Key Results &amp; Visualizations</h2>
+        
+        <h3>Model Performance Across k-mer Sizes</h3>
+        <p>
+          We evaluated the predictive power of k-mer frequency patterns as features for human host prediction. The Neural Network model consistently outperformed both Logistic Regression and Random Forest baselines across different k-mer sizes, with 5-mer features yielding the highest Matthews Correlation Coefficient (MCC = 0.820).
+        </p>
+        
+        <!-- MCC Table 1 -->
+        <div class="table-container">
+          <table class="mcc-table">
+            <caption>Matthews Correlation Coefficient (MCC) scores across k-mer sizes and model architectures</caption>
+            <thead>
+              <tr>
+                <th><strong>k-mer</strong></th>
+                <th><strong>Logistic mcc</strong></th>
+                <th><strong>Random Forest mcc</strong></th>
+                <th><strong>Neural Network mcc</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>k3</td>
+                <td>0.723</td>
+                <td class="bold-value">0.759</td>
+                <td>0.810</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>k4</td>
+                <td class="bold-value">0.775</td>
+                <td>0.757</td>
+                <td>0.804</td>
+              </tr>
+              <tr>
+                <td>k5</td>
+                <td>0.767</td>
+                <td>0.741</td>
+                <td class="bold-value">0.820</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>k6</td>
+                <td>0.654</td>
+                <td>0.750</td>
+                <td>0.808</td>
+              </tr>
+              <tr>
+                <td>k7</td>
+                <td>0.669</td>
+                <td>0.746</td>
+                <td>0.779</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>k8</td>
+                <td>0.594</td>
+                <td>0.749</td>
+                <td>0.760</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <h3>Family-Specific Performance Analysis</h3>
+        <p>
+          We conducted a detailed analysis of model performance across individual virus families, revealing substantial variation in how well sequence features predict human compatibility. This variability suggests differing levels of host-specific genomic signatures among virus groups, which may reflect their evolutionary histories and host adaptation strategies.
+        </p>
+        
+        <!-- MCC Table 2 - Family Breakdown -->
+        <div class="table-container">
+          <table class="mcc-table">
+            <caption>Matthews Correlation Coefficient comparison across virus families, sorted by dataset size</caption>
+            <thead>
+              <tr>
+                <th><strong>Family</strong></th>
+                <th><strong>k3</strong></th>
+                <th><strong>k4</strong></th>
+                <th><strong>k5</strong></th>
+                <th><strong>k6</strong></th>
+                <th><strong>Sequences (H/NH)</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="left-align"><em>Flaviviridae</em></td>
+                <td class="bold-value">0.442</td>
+                <td>0.294</td>
+                <td>-0.027</td>
+                <td>0.049</td>
+                <td>9665 (2655/7010)</td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="left-align"><em>Picornaviridae</em></td>
+                <td class="bold-value">0.390</td>
+                <td>0.257</td>
+                <td>0.285</td>
+                <td>0.292</td>
+                <td>9256 (7253/2003)</td>
+              </tr>
+              <tr>
+                <td class="left-align"><em>Sedoreoviridae</em></td>
+                <td>0.248</td>
+                <td>0.068</td>
+                <td>0.276</td>
+                <td class="bold-value">0.289</td>
+                <td>8775 (3151/5624)</td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="left-align"><em>Hepadnaviridae</em></td>
+                <td>-0.320</td>
+                <td>0.341</td>
+                <td>0.738</td>
+                <td class="bold-value">0.828</td>
+                <td>8281 (7780/501)</td>
+              </tr>
+              <tr>
+                <td class="left-align"><em>Papillomaviridae</em></td>
+                <td>0.283</td>
+                <td>0.539</td>
+                <td class="bold-value">0.634</td>
+                <td>0.633</td>
+                <td>3814 (3073/741)</td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="left-align"><em>Rhabdoviridae</em></td>
+                <td>-0.020</td>
+                <td>-0.019</td>
+                <td>-0.012</td>
+                <td class="bold-value">-0.005</td>
+                <td>3029 (39/2990)</td>
+              </tr>
+              <tr>
+                <td class="left-align"><em>Spinareoviridae</em></td>
+                <td>-0.049</td>
+                <td>-0.002</td>
+                <td>-0.019</td>
+                <td class="bold-value">0.013</td>
+                <td>2582 (73/2509)</td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="left-align"><em>Adenoviridae</em></td>
+                <td>-0.144</td>
+                <td>-0.205</td>
+                <td>-0.050</td>
+                <td class="bold-value">0.000</td>
+                <td>2305 (1747/558)</td>
+              </tr>
+              <tr>
+                <td class="left-align"><em>Parvoviridae</em></td>
+                <td>0.212</td>
+                <td>0.308</td>
+                <td>0.099</td>
+                <td class="bold-value">0.311</td>
+                <td>2045 (479/1566)</td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="left-align"><em>Polyomaviridae</em></td>
+                <td class="bold-value">0.300</td>
+                <td>-0.072</td>
+                <td>-0.077</td>
+                <td>0.144</td>
+                <td>2012 (1447/565)</td>
+              </tr>
+              <tr>
+                <td class="left-align"><em>Togaviridae</em></td>
+                <td>-0.454</td>
+                <td class="bold-value">0.000</td>
+                <td class="bold-value">0.000</td>
+                <td class="bold-value">0.000</td>
+                <td>1971 (811/1160)</td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="left-align"><em>Poxviridae</em></td>
+                <td class="bold-value">0.436</td>
+                <td>-0.304</td>
+                <td>-0.155</td>
+                <td>-0.110</td>
+                <td>1445 (835/610)</td>
+              </tr>
+              <tr>
+                <td class="left-align"><em>Orthoherpesviridae</em></td>
+                <td>-0.257</td>
+                <td>-0.224</td>
+                <td>-0.032</td>
+                <td class="bold-value">0.155</td>
+                <td>1192 (629/563)</td>
+              </tr>
+              <tr class="row-highlight">
+                <td class="left-align"><em>Orthomyxoviridae</em></td>
+                <td>0.059</td>
+                <td class="bold-value">0.101</td>
+                <td>0.000</td>
+                <td>-0.046</td>
+                <td>929 (77/852)</td>
+              </tr>
+              <tr>
+                <td class="left-align"><em>Astroviridae</em></td>
+                <td class="bold-value">0.181</td>
+                <td>0.013</td>
+                <td>0.126</td>
+                <td>0.047</td>
+                <td>745 (132/613)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <h3>Embedding Analysis and Visualization</h3>
+        <p>
+          t-distributed stochastic neighbor embedding (t-SNE) is a widely used nonlinear dimensionality reduction technique that preserves local relationships between data points when projecting high-dimensional data into a lower-dimensional space. To visualize and analyze the relationships between virus sequences, we employed t-SNE to generate low-dimensional projections of both the raw k-mer frequency vectors and the learned embeddings from the neural network's final layer. This was done on both training and test datasets using scikit-learn.
+        </p>
+        
+        <p>
+          The resulting visualizations were colored according to three different classification schemes: human/non-human host tropism, model prediction probabilities, and prediction uncertainty. The uncertainty <em>u</em> for a prediction probability <em>p</em> was calculated as:
+        </p>
+        
+        <div class="formula-container">
+          <span>\[ u = 1 - 2|p - 0.5| \]</span>
+        </div>
+        
+        <p>
+          where maximum uncertainty (1.0) occurs at <em>p</em>=0.5 and minimum uncertainty (0) at <em>p</em>=0 or <em>p</em>=1.
+        </p>
+        
+        <div class="interactive-viz">
+          <h3>t-SNE Visualization 1: Human Host Probability</h3>
+          <div class="iframe-container">
+            <iframe src="tsne_viz1.html" title="Interactive t-SNE for human host probability distribution"></iframe>
+          </div>
+          <div class="viz-caption">
+            Interactive visualization showing the distribution of predicted human-host probabilities across the sequence embedding space.
+          </div>
+        </div>
+        
+        <div class="interactive-viz">
+          <h3>t-SNE Visualization 2: Prediction Uncertainty</h3>
+          <div class="iframe-container">
+            <iframe src="tsne_viz2.html" title="Interactive t-SNE for prediction uncertainty"></iframe>
+          </div>
+          <div class="viz-caption">
+            Distribution of prediction uncertainty across the sequence embedding space, highlighting areas where the model is most and least confident.
+          </div>
+        </div>
+        
+        <h3>Pathogenicity and Adaptation Correlation</h3>
+        <p>
+          We observed a striking inverse relationship between predicted human adaptation and virulence. Viruses with high predicted human-host compatibility typically exhibit lower fatality rates in humans, while those with minimal adaptation signals (e.g., rabies virus, Marburg virus) tend to cause more severe or fatal disease when they do infect humans. This finding suggests potential evolutionary trade-offs between adaptation and virulence.
+        </p>
+        
+        <!-- Virus Characteristics Table -->
+        <div class="table-container">
+          <table class="mcc-table">
+            <caption>Viruses and their reported human-fatality rate sorted by human-host probability from 5-mer frequency</caption>
+            <thead>
+              <tr>
+                <th><strong>Accession</strong></th>
+                <th><strong>Virus</strong></th>
+                <th><strong>Family</strong></th>
+                <th><strong>Fatality Rate</strong></th>
+                <th><strong>Probability</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>NC_038889</td>
+                <td>Human papillomavirus 30</td>
+                <td><em>Papillomaviridae</em></td>
+                <td>~0.0001%</td>
+                <td>0.980</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_006273</td>
+                <td>Human cytomegalovirus</td>
+                <td><em>Orthoherpesviridae</em></td>
+                <td>~0.0001%</td>
+                <td>0.920</td>
+              </tr>
+              <tr>
+                <td>NC_001538</td>
+                <td>BK polyomavirus</td>
+                <td><em>Polyomaviridae</em></td>
+                <td>~0.0001%</td>
+                <td>0.910</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_003977</td>
+                <td>Hepatitis B virus</td>
+                <td><em>Hepadnaviridae</em></td>
+                <td>~0.0001%</td>
+                <td>0.871</td>
+              </tr>
+              <tr>
+                <td>MG953831</td>
+                <td>Human bocavirus 2</td>
+                <td><em>Parvoviridae</em></td>
+                <td>~0.0001%</td>
+                <td>0.730</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_063383</td>
+                <td>Monkeypox virus</td>
+                <td><em>Poxviridae</em></td>
+                <td>3–6%</td>
+                <td>0.680</td>
+              </tr>
+              <tr>
+                <td>KX010994</td>
+                <td>Yellow fever virus</td>
+                <td><em>Flaviviridae</em></td>
+                <td>20–60%</td>
+                <td>0.550</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_001802</td>
+                <td>HIV</td>
+                <td><em>Retroviridae</em>*</td>
+                <td>~0.0001%</td>
+                <td>0.543</td>
+              </tr>
+              <tr>
+                <td>NC_045512</td>
+                <td>SARS-CoV-2</td>
+                <td><em>Coronaviridae</em>*</td>
+                <td>~1%</td>
+                <td>0.445</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_001477</td>
+                <td>Dengue virus type 1</td>
+                <td><em>Flaviviridae</em></td>
+                <td>~1%</td>
+                <td>0.350</td>
+              </tr>
+              <tr>
+                <td>NC_001475</td>
+                <td>Dengue virus type 3</td>
+                <td><em>Flaviviridae</em></td>
+                <td>~1%</td>
+                <td>0.330</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_002640</td>
+                <td>Dengue virus type 4</td>
+                <td><em>Flaviviridae</em></td>
+                <td>~1%</td>
+                <td>0.320</td>
+              </tr>
+              <tr>
+                <td>NC_044855</td>
+                <td>Norovirus</td>
+                <td><em>Calciviridae</em>*</td>
+                <td>0.1–0.001%</td>
+                <td>0.260</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_075022</td>
+                <td>Venezuelan equine encephalitis virus</td>
+                <td><em>Flaviviridae</em></td>
+                <td>1%</td>
+                <td>0.214</td>
+              </tr>
+              <tr>
+                <td>NC_001474</td>
+                <td>Dengue virus type 2</td>
+                <td><em>Flaviviridae</em></td>
+                <td>~1%</td>
+                <td>0.170</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_001563</td>
+                <td>West Nile virus</td>
+                <td><em>Flaviviridae</em></td>
+                <td>3–15%</td>
+                <td>0.168</td>
+              </tr>
+              <tr>
+                <td>NC_005062</td>
+                <td>Omsk hemorrhagic fever</td>
+                <td><em>Flaviviridae</em></td>
+                <td>0.5–3%</td>
+                <td>0.168</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_019843</td>
+                <td>MERS</td>
+                <td><em>Coronaviridae</em>*</td>
+                <td>35–36%</td>
+                <td>0.140</td>
+              </tr>
+              <tr>
+                <td>NC_002728</td>
+                <td>Nipah virus</td>
+                <td><em>Paramyxoviridae</em>*</td>
+                <td>40–75%</td>
+                <td>0.124</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_001608</td>
+                <td>Marburg virus</td>
+                <td><em>Filoviridae</em>*</td>
+                <td>50%</td>
+                <td>0.093</td>
+              </tr>
+              <tr>
+                <td>NC_006432</td>
+                <td>Sudan ebola virus</td>
+                <td><em>Filoviridae</em>*</td>
+                <td>40–75%</td>
+                <td>0.079</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_004812</td>
+                <td>Macacine alphaherpesvirus 1</td>
+                <td><em>Orthoherpesviridae</em></td>
+                <td>100%</td>
+                <td>0.075</td>
+              </tr>
+              <tr>
+                <td>NC_003899</td>
+                <td>Eastern equine encephalitis virus</td>
+                <td><em>Flaviviridae</em></td>
+                <td>30%</td>
+                <td>0.064</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_001542</td>
+                <td>Rabies virus</td>
+                <td><em>Rhabdoviridae</em></td>
+                <td>100%</td>
+                <td>0.063</td>
+              </tr>
+              <tr>
+                <td>NC_075802</td>
+                <td>Salmonid herpesvirus 2</td>
+                <td><em>Alloherpesviridae</em>*</td>
+                <td>NA</td>
+                <td>0.042</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_079185</td>
+                <td>Vibrio phage</td>
+                <td><em>Chaseviridae</em>*</td>
+                <td>NA</td>
+                <td>0.037</td>
+              </tr>
+              <tr>
+                <td>NC_079140</td>
+                <td>Gordonia phage Azira</td>
+                <td><em>Caudoviricetes</em>*</td>
+                <td>NA</td>
+                <td>0.036</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>OR795895</td>
+                <td>Cucumber mosaic virus</td>
+                <td><em>Bromoviridae</em>*</td>
+                <td>NA</td>
+                <td>0.035</td>
+              </tr>
+              <tr>
+                <td>NC_078671</td>
+                <td>Grapevine line pattern virus</td>
+                <td><em>Bromoviridae</em>*</td>
+                <td>NA</td>
+                <td>0.034</td>
+              </tr>
+              <tr class="row-highlight">
+                <td>NC_077680</td>
+                <td>Tomato mottle leaf curl virus</td>
+                <td><em>Geminiviridae</em>*</td>
+                <td>NA</td>
+                <td>0.028</td>
+              </tr>
+              <tr>
+                <td>NC_004181</td>
+                <td>Colorado tick fever virus</td>
+                <td><em>Flaviviridae</em></td>
+                <td>0.2%</td>
+                <td>0.022</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <article>
+          <h3>SARS-CoV-2 Analysis</h3>
+          <p>
+            The model correctly identified human SARS-CoV-2 sequences as possessing distinct human-host signatures relative to non-human betacoronaviruses. A gradual increase in predicted human-host probability over time (2019-2024) was observed, averaging an increase of 6.89×10⁻³ per month.
+          </p>
+        </article>
+        
+        <article>
+          <h3>COVID-19 Adaptation Trend</h3>
+          <div style="text-align: center; margin: 25px auto; max-width: 800px;">
+            <div style="border: 1px solid #ddd; border-radius: 5px; padding: 10px; background-color: #f9f9f9; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+              <img src="images/temporal_analysis_smoothed_v3.pdf" alt="SARS-CoV-2 human adaptation trend (2019-2024)" style="max-width: 100%; height: auto;">
+              <p style="margin-top: 15px; font-style: italic; color: #555; text-align: center;">
+                Figure 4: Temporal analysis of SARS-CoV-2 genome sequences showing increasing human host adaptation probability from 2019 to 2024. Each point represents a viral genome isolate, with the trend line showing a consistent increase in predicted human adaptation.
+              </p>
+            </div>
+          </div>
+        </article>
+      </section>
+      
+      <!-- Citation -->
+      <section>
+        <h2 class="section-title">Citation</h2>
+        <div class="citation-box">
+@article{carbajo2025virus,
+  title={A Virus Genome Dataset for Sequence-Based Human Host Prediction},
+  author={Carbajo Jr., Alan L. and Vensko, Taylor A. and Pellett, Philip E.},
+  journal={bioRxiv},
+  year={2025},
+}
+        </div>
+      </section>
+      
+      <!-- Data Availability -->
+      <section>
+        <h2 class="section-title">Data Availability</h2>
+        <ul>
+          <li>Data splits and vectorized dataset: <a href="https://github.com/hiyata/ViralHostDataset" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li>Trained model weights: <a href="https://huggingface.co/hiyata" target="_blank" rel="noopener noreferrer">Hugging Face</a></li>
+          <li>Parquet format with metadata: <a href="https://huggingface.co/datasets/hiyata/Virus-Host-Genomes" target="_blank" rel="noopener noreferrer">Hugging Face Dataset</a></li>
+          <li>Demo space: <a href="https://huggingface.co/spaces/hiyata/HostClassifier" target="_blank" rel="noopener noreferrer">Host Classifier</a></li>
+        </ul>
+      </section>
+      
+      <!-- Metadata Explorer -->
+      <section id="metadata-explorer">
+        <h2 class="section-title">Metadata Explorer</h2>
+        <div id="metadata-loading">Loading metadata...</div>
+        <div id="metadata-table-container" style="display: none;">
+          <table id="metadataTable" class="display" style="width:100%"></table>
+        </div>
+      </section>
+      
+      <!-- Acknowledgements -->
+      <section>
+        <h2 class="section-title">Acknowledgements</h2>
+        <p>
+          We extend our gratitude to the data contributors and maintainers of public genomic databases. We also acknowledge the institutional support and feedback from colleagues during the development of this dataset.
+        </p>
+      </section>
+    </main>
+    
+    <footer>
+      <p>© 2025 Alan L. Carbajo Jr., Taylor A. Vensko, and Philip E. Pellett | Wayne State University School of Medicine</p>
+      <p>Contact: <a href="mailto:ga5808@wayne.edu">ga5808@wayne.edu</a></p>
+    </footer>
+  </div>
+  
+  <!-- Include JS Libraries -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+  <!-- Papa Parse for CSV Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      Papa.parse("metadata.csv", {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function(results) {
+          var data = results.data;
+          var columns = [];
+          if(data.length > 0){
+            Object.keys(data[0]).forEach(function(header){
+              columns.push({ title: header, data: header });
+            });
+          }
+          $("#metadataTable").DataTable({
+            data: data,
+            columns: columns,
+            pageLength: 25,
+            lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "All"]],
+            responsive: true,
+            scrollX: true,
+            autoWidth: false
+          });
+          $("#metadata-loading").hide();
+          $("#metadata-table-container").show();
+        },
+        error: function(err) {
+          console.error("Error loading CSV:", err);
+          $("#metadata-loading").text("Failed to load metadata.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -44,7 +44,7 @@
     a:hover {
       text-decoration: underline;
     }
-    
+
     /* Header */
     header {
       border-bottom: 2px solid #ddd;
@@ -61,8 +61,16 @@
       flex: 1 1 60%;
     }
     .project-title h1 {
-      font-size: 2.8em;
-      margin-bottom: 5px;
+      font-size: 2.2em;
+      margin-bottom: 0;
+      line-height: 1.2;
+    }
+    .project-title .subtitle {
+      font-size: 1.3em;
+      margin-top: 5px;
+      font-weight: 500;
+      color: #444;
+      line-height: 1.3;
     }
     .project-meta {
       flex: 1 1 35%;
@@ -81,7 +89,7 @@
     .links a {
       margin-left: 15px;
     }
-    
+
     /* Sections */
     section {
       margin-bottom: 50px;
@@ -102,7 +110,7 @@
     ul {
       margin-left: 20px;
     }
-    
+
     /* Teaser Image */
     .teaser {
       text-align: center;
@@ -119,32 +127,32 @@
       font-style: italic;
       color: #555;
     }
-    
+
     /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
       margin: 20px 0;
     }
-    
+
     .table-container {
       overflow-x: auto;
       display: block;
       margin: 0 auto;
       max-width: 100%;
     }
-    
+
     /* Metadata Table Specific */
     #metadataTable {
       width: 100% !important;
       max-width: 100%;
     }
-    
+
     #metadata-table-container {
       overflow-x: auto;
       max-width: 100%;
     }
-    
+
     th, td {
       padding: 10px;
       border: 1px solid #ddd;
@@ -157,7 +165,7 @@
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
-    
+
     /* MCC Tables Styles */
     .mcc-table {
       margin: 30px auto;
@@ -204,7 +212,7 @@
       right: 3px;
       color: #0066cc;
     }
-    
+
     /* Interactive Visualizations */
     .interactive-viz {
       margin: 40px 0;
@@ -240,19 +248,19 @@
       text-align: center;
       color: #555;
     }
-    
+
     /* Formula */
     .formula-container {
       text-align: center;
       margin: 20px 0;
       font-size: 1.1em;
     }
-    
+
     /* Metadata Explorer */
     #metadata-explorer {
       margin-top: 40px;
     }
-    
+
     /* Citation Box */
     .citation-box {
       background-color: #f9f9f9;
@@ -263,7 +271,7 @@
       font-size: 0.9em;
       overflow-x: auto;
     }
-    
+
     /* Footer */
     footer {
       border-top: 1px solid #ddd;
@@ -272,7 +280,7 @@
       font-size: 0.9em;
       color: #555;
     }
-    
+
     /* Responsive Adjustments */
     @media (max-width: 768px) {
       .header-top {
@@ -282,6 +290,12 @@
       .project-meta, .links {
         text-align: center;
       }
+      .project-title h1 {
+        font-size: 1.8em;
+      }
+      .project-title .subtitle {
+        font-size: 1.1em;
+      }
     }
   </style>
 </head>
@@ -290,7 +304,8 @@
     <header>
       <div class="header-top">
         <div class="project-title">
-          <h1>Sequence Based Virus Host Prediction: A Curated Dataset and Generalizable Framework for Training Artificial Intelligence to Identify Viruses of Humans </h1>
+          <h1>Sequence Based Virus Host Prediction</h1>
+          <h2 class="subtitle">A Curated Dataset and Generalizable Framework for Training Artificial Intelligence to Identify Viruses of Humans</h2>
         </div>
         <div class="project-meta">
           <div class="authors">
